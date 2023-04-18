@@ -297,7 +297,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                 };
 
 #if UNITY_2022_2_OR_NEWER
-                result.passes.Add(SimpleLitPasses.Forward(target, blendModePreserveSpecular, specularHighlights, CorePragmas.ForwardSM45, SimpleLitKeywords.DOTSForward));
+                result.passes.Add(SimpleLitPasses.Forward(target, blendModePreserveSpecular, specularHighlights, CorePragmas.Forward, SimpleLitKeywords.DOTSForward));
 #elif UNITY_2022_1_OR_NEWER
                 result.passes.Add(SimpleLitPasses.Forward(target, blendModePreserveSpecular, specularHighlights, CorePragmas.DOTSForward));
 #else
@@ -313,26 +313,26 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                 // cull the shadowcaster pass if we know it will never be used
                 if (target.castShadows || target.allowMaterialOverride)
 #if UNITY_2022_2_OR_NEWER
-                    result.passes.Add(PassVariant(CorePasses.ShadowCaster(target), CorePragmas.InstancedSM45));
+                    result.passes.Add(PassVariant(CorePasses.ShadowCaster(target), CorePragmas.Instanced));
 #else
                     result.passes.Add(PassVariant(CorePasses.ShadowCaster(target), CorePragmas.DOTSInstanced));
 #endif
 
                 if (target.mayWriteDepth)
 #if UNITY_2022_2_OR_NEWER
-                    result.passes.Add(PassVariant(CorePasses.DepthOnly(target), CorePragmas.InstancedSM45));
+                    result.passes.Add(PassVariant(CorePasses.DepthOnly(target), CorePragmas.Instanced));
 #else
                     result.passes.Add(PassVariant(CorePasses.DepthOnly(target), CorePragmas.DOTSInstanced));
 #endif
 
 #if UNITY_2022_2_OR_NEWER
-                result.passes.Add(PassVariant(SimpleLitPasses.DepthNormal(target), CorePragmas.InstancedSM45));
+                result.passes.Add(PassVariant(SimpleLitPasses.DepthNormal(target), CorePragmas.Instanced));
 #else
                 result.passes.Add(PassVariant(SimpleLitPasses.DepthNormal(target), CorePragmas.DOTSInstanced));
 #endif
 
 #if UNITY_2022_2_OR_NEWER
-                result.passes.Add(PassVariant(SimpleLitPasses.Meta(target), CorePragmas.DefaultSM45));
+                result.passes.Add(PassVariant(SimpleLitPasses.Meta(target), CorePragmas.Instanced));
 #else
                 result.passes.Add(PassVariant(SimpleLitPasses.Meta(target), CorePragmas.DOTSDefault));
 #endif
@@ -340,19 +340,19 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                 // Currently neither of these passes (selection/picking) can be last for the game view for
                 // UI shaders to render correctly. Verify [1352225] before changing this order.
 #if UNITY_2022_2_OR_NEWER
-                result.passes.Add(PassVariant(CorePasses.SceneSelection(target), CorePragmas.DefaultSM45));
+                result.passes.Add(PassVariant(CorePasses.SceneSelection(target), CorePragmas.Instanced));
 #else
                 result.passes.Add(PassVariant(CorePasses.SceneSelection(target), CorePragmas.DOTSDefault));
 #endif
 
 #if UNITY_2022_2_OR_NEWER
-                result.passes.Add(PassVariant(CorePasses.ScenePicking(target), CorePragmas.DefaultSM45));
+                result.passes.Add(PassVariant(CorePasses.ScenePicking(target), CorePragmas.Instanced));
 #else
                 result.passes.Add(PassVariant(CorePasses.ScenePicking(target), CorePragmas.DOTSDefault));
 #endif
 
 #if UNITY_2022_2_OR_NEWER
-                result.passes.Add(PassVariant(SimpleLitPasses._2D(target), CorePragmas.DefaultSM45));
+                result.passes.Add(PassVariant(SimpleLitPasses._2D(target), CorePragmas.Instanced));
 #else
                 result.passes.Add(PassVariant(SimpleLitPasses._2D(target), CorePragmas.DOTSDefault));
 #endif
@@ -546,7 +546,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                     renderStates = CoreRenderStates.UberSwitchedRenderState(target/*, blendModePreserveSpecular*/),
 #endif
 #if UNITY_2022_2_OR_NEWER
-                    pragmas = CorePragmas.GBufferSM45,
+                    pragmas = CorePragmas.GBuffer,
 #else
                     pragmas = CorePragmas.DOTSGBuffer,
 #endif
@@ -675,7 +675,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                     pragmas = CorePragmas.Instanced,
                     defines = new DefineCollection(),
 #if UNITY_2022_2_OR_NEWER
-                    keywords = new KeywordCollection() { CoreKeywords.DOTSDepthNormal },
+                    keywords = new KeywordCollection(),// { CoreKeywords.DOTSDepthNormal },
 #else
                     keywords = new KeywordCollection(),
 #endif
@@ -851,7 +851,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
             public static readonly KeywordCollection DOTSForward = new KeywordCollection
             {
                 { Forward },
-                { CoreKeywordDescriptors.WriteRenderingLayers },
+                { CoreKeywordDescriptors.LightLayers },
             };
 #endif
 
@@ -869,7 +869,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                 { CoreKeywordDescriptors.DBuffer },
                 { CoreKeywordDescriptors.GBufferNormalsOct },
 #if UNITY_2022_2_OR_NEWER
-                { CoreKeywordDescriptors.WriteRenderingLayers },
+                { CoreKeywordDescriptors.LightLayers },
 #else
                 { CoreKeywordDescriptors.LightLayers },
 #endif
